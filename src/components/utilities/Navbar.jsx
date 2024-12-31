@@ -18,13 +18,13 @@ function Navbar() {
       <div className="text-white bg-black sticky top-0 flex items-center justify-between px-6 py-4">
         <p className="text-xl font-bold">Logo</p>
 
-        <div className="hidden sm:flex flex-1 justify-center space-x-8">
+        <div className="hidden sm:flex flex-1 justify-center space-x-16">
           {items.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
               className={({ isActive }) =>
-                `hover:text-gray-400 ${isActive ? 'text-yellow-400 font-bold' : 'text-white'}`
+                `hover:text-gray-400 ${isActive ? 'text-orange font-bold' : 'text-white'}`
               }
             >
               {item.name}

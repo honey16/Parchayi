@@ -21,8 +21,8 @@ function Sidebar({ isOpen, onClose, items }) {
             key={item.path}
             to={item.path}
             className={({ isActive }) =>
-              `text-white text-lg hover:text-yellow-400 ${
-                isActive ? 'text-yellow-400 font-bold' : ''
+              `text-lg hover:text-gray-400 ${
+                isActive ? 'text-orange font-bold' : 'text-white'
               }`
             }
             onClick={onClose}
