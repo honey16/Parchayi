@@ -1,11 +1,18 @@
-function App() {
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Hero from './components/home/Hero.jsx'
+import Navbar from './components/utilities/Navbar.jsx'
+import Gallery from './components/gallery/Gallery.jsx'
 
+function App() {
   return (
     <>
-      <h1 className="text-red-800">Hello</h1>
-      <p className="font-primary">
-        Parchhayi ki site
-      </p>
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Hero />} />
+          <Route path="/gallery" element={<Gallery />} />
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }
