@@ -1,11 +1,13 @@
+import Hero from "./components/home/Hero"
+import Contact from "./components/utilities/Contact"
+
+
 function App() {
 
   return (
     <>
-      <h1 className="text-red-800">Hello</h1>
-      <p className="font-primary">
-        Parchhayi ki site
-      </p>
+      <Hero/>
+      <Contact/>
     </>
   )
 }
