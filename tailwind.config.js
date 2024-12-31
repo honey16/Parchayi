@@ -5,7 +5,18 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        white: "#FFFFFF",
+        dark: "#131313",
+        orange: "#F1A253",
+      },
+      fontFamily: {
+        primary: ['"Libre Baskerville"', "serif"], // Primary heading
+        secondary: ['Montserrat', "sans-serif"],   // Secondary heading
+        body: ['Roboto', "sans-serif"],  
+      },
+    },
   },
   plugins: [],
-}
+};
