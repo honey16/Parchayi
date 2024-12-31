@@ -1,13 +1,15 @@
-function App() {
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query"  
+import UnsplashGallery from "./components/gallery/Gallery.jsx"
 
-  return (
-    <>
-      <h1 className="text-red-800">Hello</h1>
-      <p className="font-primary">
-        Parchhayi ki site
-      </p>
-    </>
-  )
+
+const queryClient = new QueryClient();
+
+export default function App() {
+   return (
+     <QueryClientProvider client={queryClient}>
+       <div>
+         <UnsplashGallery />
+       </div>
+     </QueryClientProvider>
+   )
 }
-
-export default App
