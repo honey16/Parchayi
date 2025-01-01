@@ -14,7 +14,7 @@ export default {
       fontFamily: {
         primary: ['"Libre Baskerville"', "serif"], // Primary heading
         secondary: ['Montserrat', "sans-serif"],   // Secondary heading
-        body: ['Roboto', "sans-serif"],  
+        bodytext: ['Quicksand', "sans-serif"],  
       },
     },
   },
