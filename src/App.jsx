@@ -1,12 +1,11 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import Hero from './components/home/Hero.jsx';
-import Navbar from './components/utilities/Navbar.jsx';
-import Gallery from './components/gallery/Gallery.jsx';
-import Contact from './components/utilities/Contact.jsx';
-import UnsplashGallery from './components/gallery/Gallery.jsx';
-import About from './components/about/About.jsx';
+import Hero from "./components/home/Hero.jsx";
+import Navbar from "./components/utilities/Navbar.jsx";
+import Gallery from "./components/gallery/Gallery.jsx";
+import Contact from "./components/utilities/Contact.jsx";
+import About from "./components/about/About.jsx";
 
 const queryClient = new QueryClient();
 
@@ -18,7 +17,6 @@ function App() {
         <Routes>
           <Route path="/" element={<Hero />} />
           <Route path="/gallery" element={<Gallery />} />
-          <Route path="/unsplash" element={<UnsplashGallery />} />
           <Route path="/about" element={<About />} />
         </Routes>
         <Contact />
@@ -28,4 +26,5 @@ function App() {
 }
 
 export default App;
+
 

@@ -1,176 +1,82 @@
-import React, { useState, useEffect, useRef } from "react";
-import Masonry from "react-masonry-css";
+import React, { useState } from "react";
+import PhotoAlbum from "react-photo-album";
+import "react-photo-album/styles.css";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import gsap from "gsap";
-import "./Gallery.css";
 import Pagination from "../utilities/Pagination/Pagination.jsx";
+import Heading from "../utilities/Heading.jsx";
 
 const UNSPLASH_ACCESS_KEY = "r44OcdTVIj6wgDTdHRXB3nW-kfWDYxT6Y1f__CYhzME";
-const PER_PAGE = 15;
+const PHOTOS_PER_PAGE = 15;
 
-const UnsplashGallery = () => {
-  const [selected, setSelected] = useState(0);
-  const [hasAnimatedOnce, setHasAnimatedOnce] = useState(false);
-  const cardsRef = useRef([]);
-  const containerRef = useRef(null);
-  const timelineRef = useRef(null);
-
-  const breakpointColumns = {
-    default: 4,
-    1100: 3,
-    700: 2,
-    500: 2,
-  };
-
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["photos", selected],
+const PhotoAlbumGallery = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["photos", currentPage],
     queryFn: async () => {
-      const response = await axios.get(
-        `https://api.unsplash.com/photos?page=${selected + 1}&per_page=${PER_PAGE}`,
-        {
-          headers: {
-            Authorization: `Client-ID ${UNSPLASH_ACCESS_KEY}`,
-          },
-        }
-      );
+      const response = await axios({
+        method: "get",
+        url: "https://api.unsplash.com/photos",
+        params: {
+          per_page: PHOTOS_PER_PAGE,
+          page: currentPage,
+          order_by: "latest",
+        },
+        headers: {
+          Authorization: `Client-ID ${UNSPLASH_ACCESS_KEY}`,
+          "Accept-Version": "v1",
+          "Content-Type": "application/json",
+        },
+      });
+
+      const totalPhotos = 100;
+      const photos = response.data.map((photo) => ({
+        src: photo.urls.regular,
+        width: photo.width,
+        height: photo.height,
+        alt: photo.alt_description || "Unsplash photo",
+      }));
+
       return {
-        photos: response.data,
-        totalPages: 10,
+        photos,
+        totalPhotos,
       };
     },
-    keepPreviousData: true, 
-    staleTime: 5 * 60 * 1000,
+    retry: 1,
   });
 
-  useEffect(() => {
-    timelineRef.current = gsap.timeline();
-    return () => {
-      if (timelineRef.current) {
-        timelineRef.current.kill();
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isLoading && data?.photos && containerRef.current && !hasAnimatedOnce) {
-      cardsRef.current = [];
-
-      const imagePromises = Array.from(
-        containerRef.current.getElementsByTagName("img")
-      ).map((img) => {
-        return new Promise((resolve) => {
-          if (img.complete) {
-            resolve();
-          } else {
-            img.onload = () => resolve();
-          }
-        });
-      });
-
-      Promise.all(imagePromises).then(() => {
-        if (timelineRef.current) {
-          timelineRef.current.kill();
-        }
-
-        timelineRef.current = gsap.timeline();
-
-        gsap.set(".masonry-item", {
-          y: window.innerHeight,
-          opacity: 0,
-          scale: 0.8,
-        });
-
-        timelineRef.current.to(".masonry-item", {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 1,
-          stagger: {
-            amount: 0.8,
-            grid: "auto",
-          },
-          ease: "power3.out",
-          clearProps: "scale",
-          onComplete: () => setHasAnimatedOnce(true),
-        });
-      });
-    }
-  }, [data, isLoading, hasAnimatedOnce]);
-
-  const handleMouseEnter = (index) => {
-    if (cardsRef.current[index]) {
-      gsap.to(cardsRef.current[index], {
-        scale: 1.05,
-        boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
-        duration: 0.3,
-        ease: "power2.out",
-      });
-    }
-  };
-
-  const handleMouseLeave = (index) => {
-    if (cardsRef.current[index]) {
-      gsap.to(cardsRef.current[index], {
-        scale: 1,
-        boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-        duration: 0.3,
-        ease: "power2.out",
-      });
-    }
-  };
-
-  if (isLoading) {
-    return <div className="text-center py-8">Loading...</div>;
-  }
-
-  if (isError) {
-    return (
-      <div className="text-center py-8 text-red-500">Error loading images</div>
-    );
-  }
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading photos</div>;
+  if (!data || data.photos.length === 0) return <div>No photos found</div>;
 
   return (
-    <div className="max-w-[90vw] mx-auto px-4" ref={containerRef}>
-      <Masonry
-        breakpointCols={breakpointColumns}
-        className="masonry-grid"
-        columnClassName="masonry-grid_column"
-      >
-        {data.photos.map((photo, index) => (
-          <div
-            key={photo.id}
-            className="masonry-item overflow-hidden"
-            ref={(el) => (cardsRef.current[index] = el)}
-            onMouseEnter={() => handleMouseEnter(index)}
-            onMouseLeave={() => handleMouseLeave(index)}
-            style={{ 
-              opacity: hasAnimatedOnce ? 1 : 0,
-              borderRadius: '0.5rem',
-              backgroundColor: '#fff'
-            }}
-          >
-            <img
-              src={photo.urls.regular}
-              alt={photo.alt_description || "Unsplash photo"}
-              className="w-full h-auto rounded-lg transition-opacity duration-300"
-              style={{
-                display: 'block',
-                borderRadius: '0.5rem'
-              }}
-              loading="lazy"
-            />
-          </div>
-        ))}
-      </Masonry>
-      <Pagination
-        totalPosts={data.totalPages * PER_PAGE}
-        postsPerPage={PER_PAGE}
-        setCurrentPage={setSelected}
-        currentPage={selected}
+    <div className="max-w-6xl mx-auto px-6 py-16">
+      <Heading
+        title="Our vision is to make work inspiring and fulfilling"
+        customTitleStyle="text-orange font-primary text-5xl font-bold"
+        subTitle="The photography and videography society of DTU, capturing the world one frame at a time. Explore, create, and tell your story through the lens. Join us to celebrate creativity and express yourself!"
+        customSubTitleStyle="text-black mt-6 font-body text-1xl"
+        containerStyle="text-center w-3/4 mt-4 mx-auto mb-16"
       />
+
+      <div className="container mx-auto p-4">
+        <PhotoAlbum
+          layout="rows"
+          photos={data.photos}
+          targetRowHeight={250}
+          spacing={10}
+          
+        />
+        <Pagination
+          totalPosts={data.totalPhotos}
+          postsPerPage={PHOTOS_PER_PAGE}
+          setCurrentPage={setCurrentPage}
+          currentPage={currentPage}
+          activeColor="orange"
+        />
+      </div>
     </div>
   );
 };
 
-export default UnsplashGallery;
+export default PhotoAlbumGallery;

@@ -1,7 +1,15 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import pic from "../../assets/images/flower-pic.jpg"
+import { cardAnimations } from '../utilities/animations';
 
 const Hero = () => {
+  const cardRefs = useRef([]);
+
+  useEffect(() => {
+    cardAnimations.rightFadeIn(cardRefs.current);
+    return () => cardAnimations.cleanup();
+  }, []);
+
   const stats = [
     { number: "20+", label: "Events covered" },
     { number: "20+", label: "Events covered" },
@@ -54,7 +62,10 @@ const Hero = () => {
           <div className="absolute right-0 -left-[800px] top-[30%]">
             <div className="flex gap-14">
               {images.map((image, index) => (
-                <div key={index} className="w-[400px] last:mr-[-200px]">
+                <div key={index} 
+                  className="w-[400px] last:mr-[-200px]"
+                  ref={(el) => (cardRefs.current[index] = el)}
+                >
                   <div className="relative">
                     <img
                       src={image.src}
