@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { RowsPhotoAlbum } from "react-photo-album";
 import "react-photo-album/rows.css";
 import { useQuery } from "@tanstack/react-query";
@@ -39,10 +39,9 @@ const PhotoAlbumGallery = () => {
         width: photo.width,
         height: photo.height,
         alt: photo.alt_description || "Unsplash photo",
-        key: photo.id, // Add a unique key for each photo
+        key: photo.id,
       }));
 
-      // Update sortedPhotos when new data arrives
       setSortedPhotos(photos);
 
       return {
