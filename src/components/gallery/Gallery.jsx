@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import { RowsPhotoAlbum } from "react-photo-album";
 import "react-photo-album/rows.css";
 import { useQuery } from "@tanstack/react-query";
@@ -7,6 +7,7 @@ import axios from "axios";
 import Pagination from "../utilities/Pagination/Pagination.jsx";
 import Heading from "../utilities/Heading.jsx";
 import SortableGallery from "../SortableGallery/SortableGallery.jsx";
+import "./Gallery.css";
 
 const UNSPLASH_ACCESS_KEY = "r44OcdTVIj6wgDTdHRXB3nW-kfWDYxT6Y1f__CYhzME";
 const PHOTOS_PER_PAGE = 15;
@@ -14,6 +15,13 @@ const PHOTOS_PER_PAGE = 15;
 const PhotoAlbumGallery = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortedPhotos, setSortedPhotos] = useState([]);
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // This will make it scroll smoothly
+    });
+  }, [currentPage]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["photos", currentPage],
@@ -84,10 +92,10 @@ const PhotoAlbumGallery = () => {
         title="Our vision is to make work inspiring and fulfilling"
         customTitleStyle="text-orange font-primary text-5xl font-bold"
         subTitle="The photography and videography society of DTU, capturing the world one frame at a time. Explore, create, and tell your story through the lens. Join us to celebrate creativity and express yourself!"
-        customSubTitleStyle="text-black mt-6 font-body text-1xl"
+        customSubTitleStyle="text-white mt-6 font-body text-1xl"
         containerStyle="text-center w-3/4 mt-4 mx-auto mb-16"
       />
-      
+
       <div className="container mx-auto p-4">
         <SortableGallery
           gallery={RowsPhotoAlbum}
