@@ -15,7 +15,7 @@ function Navbar() {
 
   return (
     <>
-      <div className="text-white bg-black sticky top-0 flex items-center justify-between px-6 py-4">
+      <div className="text-white bg-black z-50 sticky top-0 flex items-center justify-between px-6 py-4">
         <p className="text-xl font-bold">Logo</p>
 
         <div className="hidden sm:flex flex-1 justify-center space-x-16">

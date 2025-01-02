@@ -6,6 +6,7 @@ import Navbar from './components/utilities/Navbar.jsx';
 import Gallery from './components/gallery/Gallery.jsx';
 import Contact from './components/utilities/Contact.jsx';
 import UnsplashGallery from './components/gallery/Gallery.jsx';
+import About from './components/about/About.jsx';
 
 const queryClient = new QueryClient();
 
@@ -18,6 +19,7 @@ function App() {
           <Route path="/" element={<Hero />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/unsplash" element={<UnsplashGallery />} />
+          <Route path="/about" element={<About />} />
         </Routes>
         <Contact />
       </BrowserRouter>

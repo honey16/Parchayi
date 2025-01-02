@@ -24,11 +24,14 @@ const Contact = () => {
   return (
     <div className="relative bg-black text-white py-32 w-full text-roboto">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        {/* Left Section */}
-        <div className="space-y-4">
-          <img src={lines} alt="Decorative Lines" className="mb-4" />
+        <div className="space-y-4 relative">
+          <img
+            src={lines}
+            alt="Decorative Lines"
+            className="absolute -top-14 -left-16"
+          />
           <div>
-            <h2 className="text-7xl font-primary">
+            <h2 className="text-7xl font-primary relative">
               <span className="text-orange">We'd love</span> to
               <br />
               hear from
@@ -36,14 +39,13 @@ const Contact = () => {
               <span>you.</span>
             </h2>
           </div>
-          <p className=" max-w-md pt-6">
-            Whether you're interested in booking a <br/>
-            photoshoot or just want to say hello, <br/>
+          <p className="max-w-md pt-6">
+            Whether you're interested in booking a <br />
+            photoshoot or just want to say hello, <br />
             feel free to drop me a message.
           </p>
         </div>
 
-        {/* Right Section Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <input
@@ -102,4 +104,3 @@ const Contact = () => {
 };
 
 export default Contact;
-
