@@ -15,13 +15,6 @@ const PhotoAlbumGallery = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortedPhotos, setSortedPhotos] = useState([]);
 
-  useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth", // This will make it scroll smoothly
-    });
-  }, [currentPage]);
-
   const { data, isLoading, error } = useQuery({
     queryKey: ["photos", currentPage],
     queryFn: async () => {
@@ -58,6 +51,7 @@ const PhotoAlbumGallery = () => {
       };
     },
     retry: 1,
+    keepPreviousData: true,
   });
 
   // Handle photo reordering

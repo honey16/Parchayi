@@ -1,8 +1,19 @@
 import React from "react";
 
-const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage, activeColor }) => {
+const Pagination = ({
+  totalPosts,
+  postsPerPage,
+  setCurrentPage,
+  currentPage,
+  activeColor,
+}) => {
   const totalPages = Math.ceil(totalPosts / postsPerPage);
   const maxVisibleButtons = 3;
+
+  const handlePageChange = (pageNumber) => {
+    window.scrollTo(0, 0);
+    setCurrentPage(pageNumber);
+  };
 
   const getPageNumbers = () => {
     const halfVisible = Math.floor(maxVisibleButtons / 2);
@@ -11,13 +22,15 @@ const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage, act
     if (endPage - startPage + 1 < maxVisibleButtons) {
       startPage = Math.max(endPage - maxVisibleButtons + 1, 1);
     }
-    return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+    return Array.from(
+      { length: endPage - startPage + 1 },
+      (_, i) => startPage + i,
+    );
   };
 
   const pageNumbers = getPageNumbers();
-
-  const activeButtonClass = activeColor 
-    ? `bg-${activeColor} text-white` 
+  const activeButtonClass = activeColor
+    ? `bg-${activeColor} text-white`
     : "bg-[#F1A253] text-white";
 
   return (
@@ -25,7 +38,7 @@ const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage, act
       <ul className="flex items-center space-x-2">
         <li>
           <button
-            onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
+            onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
             disabled={currentPage === 1}
             className="px-3 py-2 rounded-md bg-[#171717] border border-gray-700 text-gray-300 hover:bg-[#2c2c2e] disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -36,7 +49,7 @@ const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage, act
           <>
             <li>
               <button
-                onClick={() => setCurrentPage(1)}
+                onClick={() => handlePageChange(1)}
                 className="px-3 py-2 rounded-md bg-[#171717] border border-gray-700 text-gray-300 hover:bg-[#2c2c2e]"
               >
                 1
@@ -48,7 +61,7 @@ const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage, act
         {pageNumbers.map((number) => (
           <li key={number}>
             <button
-              onClick={() => setCurrentPage(number)}
+              onClick={() => handlePageChange(number)}
               className={`px-3 py-2 rounded-md ${
                 currentPage === number
                   ? activeButtonClass
@@ -61,10 +74,12 @@ const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage, act
         ))}
         {pageNumbers[pageNumbers.length - 1] < totalPages && (
           <>
-            {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && <li className="text-gray-500">...</li>}
+            {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && (
+              <li className="text-gray-500">...</li>
+            )}
             <li>
               <button
-                onClick={() => setCurrentPage(totalPages)}
+                onClick={() => handlePageChange(totalPages)}
                 className="px-3 py-2 rounded-md bg-[#171717] border border-gray-700 text-gray-300 hover:bg-[#2c2c2e]"
               >
                 {totalPages}
@@ -74,7 +89,9 @@ const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage, act
         )}
         <li>
           <button
-            onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
+            onClick={() =>
+              handlePageChange(Math.min(currentPage + 1, totalPages))
+            }
             disabled={currentPage === totalPages}
             className="px-3 py-2 rounded-md bg-[#171717] border border-gray-700 text-gray-300 hover:bg-[#2c2c2e] disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -87,4 +104,3 @@ const Pagination = ({ totalPosts, postsPerPage, setCurrentPage, currentPage, act
 };
 
 export default Pagination;
-
