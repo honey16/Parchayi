@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react'
-import pic from "../../assets/images/flower-pic.jpg"
-import { cardAnimations } from '../utilities/animations';
+import React, { useEffect, useRef } from "react";
+import pic from "../../assets/images/flower-pic.jpg";
+import { cardAnimations } from "../utilities/animations";
 
 const Hero = () => {
   const cardRefs = useRef([]);
@@ -27,7 +27,8 @@ const Hero = () => {
       <div
         className="absolute inset-0"
         style={{
-          background: "linear-gradient(to bottom, #000000 0%, #000000 70%, #ffffff 70%, #ffffff 100%)",
+          background:
+            "linear-gradient(to bottom, #000000 0%, #000000 70%, #ffffff 70%, #ffffff 100%)",
         }}
       />
 
@@ -50,7 +51,9 @@ const Hero = () => {
           <div className="flex gap-14">
             {stats.map((stat, index) => (
               <div key={index}>
-                <div className="text-7xl font-serif text-orange">{stat.number}</div>
+                <div className="text-7xl font-serif text-orange">
+                  {stat.number}
+                </div>
                 <div className="text-base text-gray-400 mt-2">{stat.label}</div>
               </div>
             ))}
@@ -62,7 +65,8 @@ const Hero = () => {
           <div className="absolute right-0 -left-[800px] top-[30%]">
             <div className="flex gap-14">
               {images.map((image, index) => (
-                <div key={index} 
+                <div
+                  key={index}
                   className="w-[400px] last:mr-[-200px]"
                   ref={(el) => (cardRefs.current[index] = el)}
                 >
@@ -73,7 +77,9 @@ const Hero = () => {
                       className="w-full h-[600px] object-cover rounded-lg shadow-lg"
                     />
                     <div className="mt-4 flex justify-between items-center">
-                      <p className="text-gray-800 text-lg font-medium">{image.name}</p>
+                      <p className="text-gray-800 text-lg font-medium">
+                        {image.name}
+                      </p>
                       <p className="text-gray-600 text-lg">{image.year}</p>
                     </div>
                   </div>
@@ -88,6 +94,3 @@ const Hero = () => {
 };
 
 export default Hero;
-
-
-      
