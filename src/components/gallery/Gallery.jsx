@@ -7,7 +7,6 @@ import axios from "axios";
 import Pagination from "../utilities/Pagination/Pagination.jsx";
 import Heading from "../utilities/Heading.jsx";
 import SortableGallery from "../SortableGallery/SortableGallery.jsx";
-import "./Gallery.css";
 
 const UNSPLASH_ACCESS_KEY = "r44OcdTVIj6wgDTdHRXB3nW-kfWDYxT6Y1f__CYhzME";
 const PHOTOS_PER_PAGE = 15;
