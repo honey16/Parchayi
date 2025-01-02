@@ -16,6 +16,13 @@ export default {
         secondary: ['Montserrat', "sans-serif"],   // Secondary heading
         bodytext: ['Quicksand', "sans-serif"],  
       },
+      screens: { 
+        'sm': '500px', 
+        'md': '1100px', 
+        'lg': '1280px', 
+        'lg2': '1600px',
+        'xl': '1920px', 
+      }, 
     },
   },
   plugins: [],
