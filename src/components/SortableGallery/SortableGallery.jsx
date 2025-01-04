@@ -1,7 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   DndContext,
-  DragOverlay,  // Added this import
+  DragOverlay,
   closestCenter,
   KeyboardSensor,
   MouseSensor,
@@ -12,82 +12,78 @@ import {
 import { SortableContext, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import Sortable from "./Sortable";
 import Overlay from "./Overlay";
-
-// Import the CSS as a string to be used with the style tag
-const galleryStyles = `
-.gallery .react-photo-album {
-  --position-indicator-width: 4px;
-  --position-indicator-offset: calc(
-    (var(--react-photo-album--spacing, 0) * 1px + var(--position-indicator-width)) / -2
-  );
-}
-
-.overlay,
-.gallery .react-photo-album--photo {
-  cursor: grab;
-  position: relative;
-  background: #fff;
-  border-radius: var(--position-indicator-width);
-  box-shadow:
-    rgb(0 0 0 / 20%) 0 3px 3px -2px,
-    rgb(0 0 0 / 14%) 0 3px 4px 0,
-    rgb(0 0 0 / 12%) 0 1px 8px 0;
-}
-
-.overlay {
-  cursor: grabbing;
-}
-
-.overlay > img {
-  display: block;
-}
-
-.gallery .react-photo-album--image {
-  user-select: none;
-  touch-action: manipulation;
-  -webkit-touch-callout: none;
-}
-
-.gallery .react-photo-album--photo[data-active="true"] {
-  opacity: 0.3;
-}
-
-.gallery .react-photo-album--photo[data-position="after"]:after,
-.gallery .react-photo-album--photo[data-position="before"]:before {
-  content: "";
-  position: absolute;
-  background-color: #2196f3;
-  border-radius: var(--position-indicator-width);
-}
-
-.gallery .react-photo-album--rows .react-photo-album--photo[data-position="after"]:after,
-.gallery .react-photo-album--rows .react-photo-album--photo[data-position="before"]:before {
-  top: 0;
-  bottom: 0;
-  width: var(--position-indicator-width);
-}
-
-.gallery .react-photo-album--rows .react-photo-album--photo[data-position="after"]:after {
-  right: var(--position-indicator-offset);
-}
-
-.gallery .react-photo-album--rows .react-photo-album--photo[data-position="before"]:before {
-  left: var(--position-indicator-offset);
-}
-
-.gallery .react-photo-album--columns .react-photo-album--photo[data-position="after"]:after,
-.gallery .react-photo-album--masonry .react-photo-album--photo[data-position="after"]:after,
-.gallery .react-photo-album--columns .react-photo-album--photo[data-position="before"]:before,
-.gallery .react-photo-album--masonry .react-photo-album--photo[data-position="before"]:before {
-  left: 0;
-  right: 0;
-  height: var(--position-indicator-width);
-}
-`;
+import styles from "./SortableGallery.module.css";
+import leftArrow from '../../assets/images/left.svg';
+import rightArrow from '../../assets/images/right.svg';
 
 const SortableGallery = ({ gallery: Gallery, photos: photoSet, movePhoto, render, ...rest }) => {
   const ref = useRef(null);
   const [activePhoto, setActivePhoto] = useState(null);
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const touchStartX = useRef(null);
+
+  useEffect(() => {
+    if (selectedPhoto) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedPhoto]);
+
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (!selectedPhoto) return;
+
+      switch (e.key) {
+        case "ArrowLeft":
+          handleNavigate("prev");
+          break;
+        case "ArrowRight":
+          handleNavigate("next");
+          break;
+        case "Escape":
+          closeModal();
+          break;
+        default:
+          break;
+      }
+    };
+
+    const handleTouchStart = (e) => {
+      if (!selectedPhoto) return;
+      touchStartX.current = e.touches[0].clientX; 
+    };
+
+    const handleTouchEnd = (e) => {
+      if (!selectedPhoto || touchStartX.current === null) return;
+
+      const touchEndX = e.changedTouches[0].clientX; 
+      const deltaX = touchStartX.current - touchEndX;
+
+      const swipeThreshold = 50;
+
+      if (deltaX > swipeThreshold) {
+        handleNavigate("next");
+      } else if (deltaX < -swipeThreshold) {
+        handleNavigate("prev");
+      }
+
+      touchStartX.current = null; 
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchend", handleTouchEnd);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [selectedPhoto]);
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
@@ -108,6 +104,16 @@ const SortableGallery = ({ gallery: Gallery, photos: photoSet, movePhoto, render
     }
   };
 
+  const getPhotoIndex = (photo) => photos.findIndex((item) => item.id === photo.id);
+
+  const handleNavigate = (direction) => {
+    const currentIndex = getPhotoIndex(selectedPhoto);
+    const newIndex = direction === 'next' 
+      ? (currentIndex + 1) % photos.length 
+      : (currentIndex - 1 + photos.length) % photos.length;
+    setSelectedPhoto(photos[newIndex]);
+  };
+
   const handleDragEnd = ({ active, over }) => {
     if (over && active.id !== over.id) {
       movePhoto(
@@ -118,15 +124,24 @@ const SortableGallery = ({ gallery: Gallery, photos: photoSet, movePhoto, render
     setActivePhoto(null);
   };
 
+  const handlePhotoClick = (photo) => {
+    if (!activePhoto) {
+      setSelectedPhoto(photo);
+    }
+  };
+
+  const closeModal = () => {
+    setSelectedPhoto(null);
+  };
+
   const renderSortable = (Component, index, photo, props) => (
     <Sortable key={index} id={photo.id}>
-      <Component {...props} />
+      <Component {...props} onClick={() => handlePhotoClick(photo)} />
     </Sortable>
   );
 
   return (
     <>
-      <style>{galleryStyles}</style>
       <DndContext
         sensors={sensors}
         onDragEnd={handleDragEnd}
@@ -134,7 +149,7 @@ const SortableGallery = ({ gallery: Gallery, photos: photoSet, movePhoto, render
         collisionDetection={closestCenter}
       >
         <SortableContext items={photos}>
-          <div className="gallery">
+          <div className={styles.gallery}>
             <Gallery
               ref={ref}
               photos={photos}
@@ -150,9 +165,46 @@ const SortableGallery = ({ gallery: Gallery, photos: photoSet, movePhoto, render
         </SortableContext>
 
         <DragOverlay>
-          {activePhoto && <Overlay className="overlay" {...activePhoto} />}
+          {activePhoto && <Overlay className={styles.overlay} {...activePhoto} />}
         </DragOverlay>
       </DndContext>
+
+{selectedPhoto && (
+        <div className={styles.modal} onClick={closeModal}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <button className={styles.closeButton} onClick={closeModal}>×</button>
+            
+            <div className={styles.imageContainer}>
+              <img
+                src={selectedPhoto.src}
+                alt={selectedPhoto.alt}
+                className={styles.modalImage}
+              />
+              
+              <div className={styles.navigationButtons}>
+                <button 
+                  className={`${styles.navButton} ${styles.left}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNavigate('prev');
+                  }}
+                >
+                <img src={leftArrow} alt="Previous" className={styles.navIcon}/>
+                </button>
+                <button 
+                  className={`${styles.navButton} ${styles.right}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNavigate('next');
+                  }}
+                >
+                  <img src={rightArrow} alt="Next" className={styles.navIcon}/>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

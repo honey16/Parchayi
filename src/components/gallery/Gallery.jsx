@@ -79,7 +79,7 @@ const PhotoAlbumGallery = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-16">
+    <div className="max-w-[100vw] lg:max-w-[80vw] mx-auto px-6 py-16">
       <Heading
         title="Our vision is to make work inspiring and fulfilling"
         customTitleStyle="text-orange font-primary text-5xl font-bold"
